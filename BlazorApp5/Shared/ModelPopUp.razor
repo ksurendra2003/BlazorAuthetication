@@ -1,0 +1,47 @@
+﻿
+
+<div class="@cssClass" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Title</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                @ModelBody
+            </div>
+            <div class="modal-footer">
+                @ModelFooter
+                <button type="button" class="btn btn-default" @onclick="ClosePopUp">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment ModelBody { get; set; }
+
+    [Parameter]
+    public RenderFragment ModelFooter { get; set; }
+
+    [Parameter]
+    public bool IsOpened { get; set; }
+
+    string cssClass => IsOpened ? "modal-dialog" : "modal fade";
+
+    //string closeCssClass => IsOpened ? "modal-dialog" : "modal fade";
+
+    private void ClosePopUp()
+    {
+        IsOpened = false;
+    }
+
+}

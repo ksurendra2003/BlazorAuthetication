@@ -1,0 +1,100 @@
+@page "/fetchdata"
+@*@inject HttpClient Http*@
+
+@inject WeatherForecastClient WfClient
+
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>
+                        <a @onclick="(() => OpenPopup(forecast))"> @forecast.Date.ToShortDateString()</a>
+                    </td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <ModelPopUp Title="This is my Popup" IsOpened="isOpened">
+        <ModelBody>
+            <div class="row">
+                <div>Date</div>
+                <input type="text" @bind-value="WDate" id="enpname" />
+            </div>
+            <div class="row">
+                <div>Summary</div>
+                <input type="text" value="@WSummary" id="enpdept" />
+            </div>
+        </ModelBody>
+    </ModelPopUp>
+}
+
+@code {
+    private bool isOpened = false;
+
+    private WeatherForecast[] forecasts;
+
+    private string WDate = string.Empty;
+    private string WSummary = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+
+            //var forecasts1 = await Http.GetStringAsync("WeatherForecast");
+
+            forecasts = await WfClient.GetForecastAsync();
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    public class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    private void OpenPopup(WeatherForecast weatherForecast)
+    {
+        WDate = weatherForecast.Date.ToString();
+        WSummary = weatherForecast.Summary;
+
+        isOpened = true;
+    }
+}

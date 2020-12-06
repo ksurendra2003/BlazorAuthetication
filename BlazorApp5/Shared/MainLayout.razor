@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager Navigation
+@inject IUserAutheticationService userAutheticationService
+
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    </Authorized>
+</AuthorizeView>
+<div class="main">
+    <div class="top-row px-4 auth">
+        <AuthorizeView>
+            <Authorized>
+                Hello, @context.User.Identity.Name!
+                <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+            </Authorized>
+        </AuthorizeView>
+        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+@code{
+
+    private void BeginSignOut(MouseEventArgs args)
+    {
+        userAutheticationService.LogOutUser();
+
+        Navigation.NavigateTo("/");
+
+    }
+}
